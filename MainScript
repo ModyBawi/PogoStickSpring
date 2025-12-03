@@ -1,0 +1,124 @@
+SpringTm = "Main Spring";
+SpringTd = "Dump Spring";
+Ws = 12;        % weight of the shaft
+Wr = 100;       % weight of the Rider
+d = 0.03125;    % start wire diameter
+%d = 0.3125;
+E = 29.5;
+G = 11.2;
+Alpha = 0.707;    % buckling value
+c = 4;          % start value of C.
+ymc = 6;        % Max deflection of the main spring
+ymt = 0;        % Min deflection of the main spring
+ydc = 4;        % Max deflection of the dumping spring
+ydt = -2;        % Min deflection of the dumping spring
+Fr = 1.5 * Wr;    % The Rider Force
+Fs = 1 * Ws;    % The shaft Force
+
+while true
+    F_Total = Fr - 2 * Fs;              % From the Forces Diagram
+
+    [~, ~, Fa, Fm, Ks] = SpringForces(ymc,ymt,F_Total);     % Spring Forces Function
+    Sa_m = UltSt(d,Fa,Fm);                                  % Ultimate Strength Calculation Function
+
+    KB = ((4*c)+2)/((4*c)-3);           % Calculate KB
+    D = c*d;                            % Calculate spring Diameter
+
+    Ta = (KB*8*Fa*D)/(pi*d^3*1000);     % calculate the Shear Stresses
+
+    Nf = Sa_m/Ta;                       % Calculate the Factor of safety
+
+    L0T = 2.63 * D / Alpha;             % Calculate the buckling Value
+    Na = ((d^4)*G*10^6)/(8*Ks*D^3);     % Calculate the amount of active spring coils
+    Nt = Na + 2;                        % Calculate the total spring coils
+    Ls = d * Nt;                        % Calculate the solid length
+    L0 = Ls + 1.15 * ymc;               % Calculate the Free Length
+
+    OD = D+d;                           % Calculate the outer Diameter
+    ID = D-d;                           % Calculate the inner Diameter
+
+    if Nf >=1.5 && L0 < L0T && L0 < 18  % Check if the spring pass the requiredment
+        break;
+    end
+    
+    c = c + 0.5;                        % change the value of C
+
+    if c > 12                           % reset the Value of C
+        d = d + 0.03125;                % change the wire Diameter Value
+        c = 4;
+    end
+    if d > 0.5                          % break if the wire diameter been to big
+        break
+    end
+end
+
+
+disp(SpringTm)
+disp("d = " + string(d));
+disp("D = " + string(D));
+disp("OD = " + string(OD));             % print the Values
+disp("ID = " + string(ID));
+disp("c = " + string(c));
+disp("KB = " + string(KB));
+disp("Ta = " + string(Ta));
+disp("Nf = " + string(Nf));
+disp("L0T = " + string(L0T));
+disp("Ks = " + string(Ks));
+disp("Na = " + string(Na));
+disp("Nt = " + string(Nt));
+disp("Ls = " + string(Ls));
+disp("L0 = " + string(L0));
+
+
+% repeat the calculation for the dumping spring
+
+d = 0.03125;        % Reset the wire diameter and C to 
+%d = 0.1875;
+c = 4;              % calculate the dumping spring.
+Alpha = 0.5;
+
+while true
+    [~, ~, Fa, Fm, Ks] = SpringForces(ydc,ydt,Fs);
+    Sa_d = UltSt(d,Fa,Fm);
+    KB = ((4*c)+2)/((4*c)-3);
+    D = c*d;
+    Ta = (KB*8*Ks*D)/(pi*d^3*1000);
+    Nf = Sa_d/Ta;
+    L0T = 2.63 * D / Alpha;
+    Na = ((d^4)*G*10^6)/(8*Ks*D^3);
+    Nt = Na + 2;
+    Ls = d * Nt;
+    L0 = Ls + 1.15 * ydc;
+    OD = D+d;
+    ID = D-d;
+    if Nf >=1.5 && L0 < L0T && L0 < 18
+        break;
+    end
+    
+    c = c + 0.5;
+
+    if c > 12
+        d = d + 0.03125;
+        c = 4;
+    end
+
+    if d > 0.5
+        break
+    end
+
+end
+disp(SpringTd)
+disp("d = " + string(d));
+disp("D = " + string(D));
+disp("OD = " + string(OD));
+disp("ID = " + string(ID));
+disp("c = " + string(c));
+disp("KB = " + string(KB));
+disp("Ta = " + string(Ta));
+disp("Nf = " + string(Nf));
+disp("L0T = " + string(L0T));
+disp("Ks = " + string(Ks));
+disp("Na = " + string(Na));
+disp("Nt = " + string(Nt));
+disp("Ls = " + string(Ls));
+disp("L0 = " + string(L0));
