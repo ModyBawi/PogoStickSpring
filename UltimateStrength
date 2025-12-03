@@ -1,0 +1,11 @@
+function Sa = UltSt(d,Fa,Fm)
+    A = 202;                    % A value for chrome-silicon
+    m = 0.108;                  % m value for chrome-silicon
+    Ssa = 57.5;                 % for peened spring Zimmerli endurance
+    Ssm = 77.5;
+    r = Fa / Fm;                % Calculate r
+    Sut = A / d^m;              % Calculate Sut
+    Ssu = 0.67 * Sut;           % Calculate Ssu
+    Sse = Ssa / (1-(Ssm / Ssu)^2);          % use Gerber criterion for Sse
+    Sa = ((r*(Ssu^2))/(2*Sse))*(-1+sqrt(1+(2*Sse/(r*Ssu))^2));    % calculate Sa
+end
