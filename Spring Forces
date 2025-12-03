@@ -1,0 +1,18 @@
+function [Fmin, Fmax, Fa, Fm, Ks] = SpringForces(yc, yt, f)
+    Kc = f / abs(yc);               % Calculate the spring stiffness
+    Kc(isinf(Kc)) = 0;              % convert the value from infinti to zero
+    Kt = f / abs(yt);
+    Kt(isinf(Kt)) = 0;
+    
+    Ks = max(Kt, Kc);               % select the maximum stiffness
+
+    F1 = Ks * yt;                   % compression force
+    F2 = Ks * yc;                   % tension force
+    
+    Fmax = max(F1, F2);             % select Fmax value
+    Fmin = min(F1, F2);             % select Fmin Value
+
+    Fa = (Fmax - Fmin) / 2;         % calculate Fa
+    Fm = (Fmax + Fmin) / 2;         % calculate Fm
+
+end
